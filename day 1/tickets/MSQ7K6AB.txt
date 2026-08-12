@@ -1,0 +1,7 @@
+Prio: Not urgent
+
+Name: marek
+
+Submitted:2026-08-12T16:52:14.675+02:00
+
+Issue: nie potrafie sie zalogowac do n8n
