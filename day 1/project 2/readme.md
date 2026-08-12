@@ -75,6 +75,8 @@ Respond **only** with one of the following labels:
 #### Subnode 3.1: Chat Model
 
 - **Type:** Pick any model you like
+- For our demo, you can use the **OpenAI free credits** that come wiht n8n
+- For advanced use, create an [API Key](https://platform.openai.com/api-keys) and store it as a new credential in n8n.
 
 #### Subnode 3.2: Structured Output Parser
 
