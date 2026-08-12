@@ -3,103 +3,100 @@
   "nodes": [
     {
       "parameters": {
-        "contextWindowLength": 10
+        "options": {}
       },
-      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        0,
+        0
+      ],
+      "id": "5cfcc1d8-3dea-4090-8b63-56bebf251d60",
+      "name": "When chat message received",
+      "webhookId": "3644001d-ed39-409b-8ec9-e25a00ecd389"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
       "typeVersion": 1.3,
       "position": [
-        200,
-        320
+        176,
+        208
       ],
-      "id": "d3b8404e-846d-4033-b340-03d38e7deacd",
+      "id": "07798e7a-cdab-4b3b-9c14-f5255a5b3cb4",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ndVxqnMaDx1fp7bs",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.4,
+      "position": [
+        384,
+        208
+      ],
+      "id": "b87511cc-7ce3-475c-8cab-02a943096f41",
       "name": "Simple Memory"
     },
     {
       "parameters": {
-        "promptType": "define",
-        "text": "={{ $('When chat message received').item.json.chatInput }}",
         "options": {
-          "systemMessage": "=### **Role**\n\nYou are an **IT Support Chatbot** for a corporate helpdesk.\nYour role is to provide **first-level technical support** to employees who use **Windows** and **Microsoft Office applications** (Word, Excel, Outlook, PowerPoint, Teams, etc.).\n\n### **Your Objectives:**\n1. Ask the user about their name\n2. Understand the user’s problem clearly.\n3. Once the user provided their name and problem , provide **immediate troubleshooting steps** or quick answers when possible. Do not provide help until you know the name and problem.\n\n### **Response Guidelines:**\n* Use short paragraphs or numbered steps.\n* When suggesting commands or settings, write them exactly as they appear in Windows or Office.\n* Ask follow-up questions as needed.\n* If you don't know the answer, say: \"Sorry, I can't help with that.\"\n\n### **Example Response Style:**\n\n**User:** “I can’t open Excel files.”\n**Chatbot:**\n\n> Let’s try a quick fix:\n>\n> 1. Close all Excel windows.\n> 2. Press **Windows + R**, type `excel /safe`, and press **Enter** to open Excel in Safe Mode.\n> 3. Try opening the file again.\n>\n> Did that work? If not, we can check add-ins next or escalate to IT support."
+          "systemMessage": "### **Role**\n\nYou are an **IT Support Chatbot** for a corporate helpdesk.\nYour role is to provide **first-level technical support** to employees who use **Windows** and **Microsoft Office applications** (Word, Excel, Outlook, PowerPoint, Teams, etc.).\n\n### **Your Objectives:**\n1. Ask the user about their name\n2. Understand the user’s problem clearly.\n3. Once the user provided their name and problem , provide **immediate troubleshooting steps** or quick answers when possible. Do not provide help until you know the name and problem.\n\n### **Response Guidelines:**\n* Use short paragraphs or numbered steps.\n* When suggesting commands or settings, write them exactly as they appear in Windows or Office.\n* Ask follow-up questions as needed.\n* If you don't know the answer, say: \"Sorry, I can't help with that.\"\n\n### **Example Response Style:**\n\n**User:** “I can’t open Excel files.”\n**Chatbot:**\n\n> Let’s try a quick fix:\n>\n> 1. Close all Excel windows.\n> 2. Press **Windows + R**, type `excel /safe`, and press **Enter** to open Excel in Safe Mode.\n> 3. Try opening the file again.\n>\n> Did that work? If not, we can check add-ins next or escalate to IT support."
         }
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
-      "typeVersion": 2.2,
+      "typeVersion": 3.1,
       "position": [
-        64,
-        96
+        224,
+        0
       ],
-      "id": "5511b383-36ba-47de-b2d8-556b90577d11",
-      "name": "Chatbot"
-    },
-    {
-      "parameters": {
-        "public": true,
-        "authentication": "n8nUserAuth",
-        "initialMessages": "Hi there! 👋\nWelcome to our IT support. Please tell us your name to get started:",
-        "options": {
-          "inputPlaceholder": "Type your name.."
-        }
-      },
-      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
-      "typeVersion": 1.3,
-      "position": [
-        -160,
-        96
-      ],
-      "id": "5a751516-8a01-4269-94d0-462e0ae3e01c",
-      "name": "When chat message received",
-      "webhookId": "220d5913-86d7-43af-8748-3974e2af553b"
-    },
-    {
-      "parameters": {
-        "options": {}
-      },
-      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
-      "typeVersion": 1,
-      "position": [
-        72,
-        320
-      ],
-      "id": "78424728-1bb0-4d97-9fa5-de828a5c3c44",
-      "name": "Google Gemini Chat Model",
-      "credentials": {
-        "googlePalmApi": {
-          "id": "DccUcMMK12JiKk1S",
-          "name": "Google Gemini(PaLM) Api account"
-        }
-      }
+      "id": "5e38151b-efff-4ab7-a484-3947f31302fc",
+      "name": "Q&A Chatbot"
     }
   ],
   "pinData": {},
   "connections": {
-    "Simple Memory": {
-      "ai_memory": [
-        [
-          {
-            "node": "Chatbot",
-            "type": "ai_memory",
-            "index": 0
-          }
-        ]
-      ]
-    },
     "When chat message received": {
       "main": [
         [
           {
-            "node": "Chatbot",
+            "node": "Q&A Chatbot",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Google Gemini Chat Model": {
+    "OpenAI Chat Model": {
       "ai_languageModel": [
         [
           {
-            "node": "Chatbot",
+            "node": "Q&A Chatbot",
             "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Q&A Chatbot",
+            "type": "ai_memory",
             "index": 0
           }
         ]
@@ -112,18 +109,12 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "2d21d364-a942-4cfa-9c0e-78aa92245b24",
+  "versionId": "f1c38b9e-41db-424a-a1f1-d7f6898bb551",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "26bf8eec37d4d0a7ee8a9b62eaf593a40b0ce784017882c7b978518d626df3a8"
+    "instanceId": "e9c7dfa4151901f348c9cf3e12a960bd53b5b8124c52360e419ad2260c87e732"
   },
-  "id": "E-1WKUyw3KIOpkLkAaAx-",
-  "tags": [
-    {
-      "updatedAt": "2026-02-08T20:46:07.403Z",
-      "createdAt": "2026-02-08T20:46:07.403Z",
-      "id": "1TjIuZa5ju0lNrOc",
-      "name": "O'Reilly n8n"
-    }
-  ]
+  "nodeGroups": [],
+  "id": "Uwg951y9hWhLvo52",
+  "tags": []
 }
