@@ -1,8 +1,0 @@
-Prio: Urgent
-
-Name: Tobias
-
-Submitted: 2025-11-01T22:45:43.067+01:00
-
-Description:
-Ticket ID: TIS-20251101-001. User Tobias cannot log into Windows and requests escalation to IT for login/password issue resolution.

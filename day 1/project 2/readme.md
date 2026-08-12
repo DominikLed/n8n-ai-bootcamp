@@ -1,22 +1,114 @@
-# P2 – Connect AI model
+# P2 – Build a simple AI-powered text classifier
 
-## Overview
+**Note:** Start by copying the workflow from P1 and then modify it as described below.
 
-Minimal workflow to **authenticate an AI chat model** (Google Gemini) and **prove it works** by running a simple prompt. 
+## Workflow Overview
 
-## Steps
+**Purpose:** Collect IT support requests, classify them as *Urgent* or *Not urgent* using an LLM, and create a ticket file in GitHub with the classification result.
 
-1. **When clicking ‘Execute workflow’** (Manual Trigger)
+**Trigger:** Form submission (`Form Trigger`)
 
-   * Starts the test run.
+**Nodes:**
 
-2. **Google Gemini Chat Model**
+1. On form submission
+2. Edit Fields
+3. Basic LLM Chain
+   3.1 Chat Model
+4. Create a file
+                   
+---
 
-   * Model: `models/gemini-3-flash-preview`
-   * Uses stored credentials: **Google Gemini(PaLM) Api account** (authentication check).
+#### Node 3: Basic LLM Chain
 
-3. **Basic LLM Chain**
+**Type:** `LLM Chain (@n8n/n8n-nodes-langchain.chainLlm)`
 
-   * System message: *“You are a pirate”*
-   * Prompt: *“Tell me a joke”*
-   * If it returns a response, the connection + auth are working.
+**Purpose:** Classify the IT issue as *Urgent* or *Not urgent* based on predefined rules.
+
+| Parameter      | Value                                                                 |
+| -------------- | --------------------------------------------------------------------- |
+| **Prompt Source** | Define below                                                       |
+| **Require Output Format** | Toggle On |
+
+**Prompt (User Message)**
+````markdown
+Issue:
+
+```
+{{ $json['Issue description'] }}
+```
+````
+
+**System Prompt**
+```markdown
+### **Role**
+
+You are a text classification system for an IT support helpdesk.
+Your task is to read an incoming support ticket and classify it as either **"Urgent"** or **"Not urgent"** based on the content.
+
+### Classification Rules:
+
+* **Urgent** if the ticket describes:
+
+  * Complete system or network outages.
+  * Inability to perform critical work tasks.
+  * Security breaches or data loss.
+  * Hardware failure affecting essential operations.
+  * Issues impacting multiple users or key business functions.
+  * Time-sensitive problems needing immediate attention.
+
+* **Not urgent** if the ticket describes:
+
+  * Minor bugs or usability issues.
+  * Requests for information, training, or feature changes.
+  * Scheduled maintenance or non-critical updates.
+  * Problems with available workarounds.
+  * Single-user issues not blocking essential tasks.
+
+### Output Format:
+
+Respond **only** with one of the following labels:
+
+* `Urgent`
+* `Not urgent`
+```
+
+#### Subnode 3.1: Chat Model
+
+- **Type:** Pick any model you like
+
+#### Subnode 3.2: Structured Output Parser
+
+-  **Purpose:** Parse the model’s output into a structured JSON format.
+
+| Parameter          | Value                  |
+| ------------------ | ---------------------- |
+| **Schema Example** | `{ "prio": "Urgent" }` |
+
+---
+
+#### Node 4: Create a file
+
+**Type:** `GitHub`
+
+**Purpose:** Create a ticket file in GitHub including classification, submitter info, and issue details.
+
+| Parameter          | Value                                                                                                                                                                                                                                            |
+| ------------------ | -------------------------------------------------------- |
+| **Authentication** | oAuth2                                                                                                                                                                                                                                           |
+| **Resource**          | File                                                                                                                                                                                                                                          |
+| **Operation**     | Create                                                    |
+| **File Path**      | `day 1/tickets/{{ $('Set ID').item.json.ID }}.txt`                                                                                                                                                                                      |
+| **Commit Message** | new ticket                                                                                                                                                                                                                                       |
+
+**File Content**
+```markdown
+
+Prio: {{ $json.output.prio }}
+
+Name: {{ $('Set ID').item.json['Your Name'] }}
+
+Submitted:{{ $('Set ID').item.json.submittedAt }}
+
+Issue: {{ $('Set ID').item.json['Issue'] }}
+```
+

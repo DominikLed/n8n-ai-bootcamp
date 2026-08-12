@@ -18,12 +18,12 @@
 
 **Purpose:** Collect user input through an IT Service Request form.
 
-| Parameter            | Value                                                              |
-| -------------------- | ------------------------------------------------------------------ |
-| **Form Title**       | IT Service Request                                                 |
-| **Form Description** | Submit your issue here                                             |
-| **Form Fields**      | - Issue description (textarea, required)<br>- Your Name (required) |
-| **Submit Message**   | IT support will be in touch shortly!                               |
+| Parameter            | Value                                                              					 |
+| -------------------- | ----------------------------------------------------------------------------------------|
+| **Form Title**       | IT Service Request                                                 					 |
+| **Form Description** | Submit your issue here                                             					 |
+| **Form Fields**      | **Add Form Element** - Issue (textarea, required)<br>- Your Name (required) |
+| **Add Option**       | **Form Response** IT support will be in touch shortly!                            		 |
 
 ---
 
@@ -40,6 +40,9 @@
 | **Type**                             | string                                                                |
 | **Include Other Input Fields**       | True                                                                  |
 
+
+**Rename this Node:** `Set ID`
+
 ---
 
 ## Node 3: Create a file
@@ -53,6 +56,6 @@
 | **Authentication** | oAuth2                                                                                                                                                                                                          |
 | **Owner**          | your Github username                                                                                                                                                                  |
 | **Repository**     | your Github repo                                                                                                                                                                  |
-| **File Path**      | `day 1/project 1/tickets/{{ $json.ID }}.txt`                                                                                                                                                                          |
-| **File Content**   | Name: `{{ $json['Your Name'] }}`<br>Submitted: `{{ $json.submittedAt }}`<br>Description: `{{ $json['Issue description'] }}` |
+| **File Path**      | `day 1/tickets/{{ $json.ID }}.txt`                                                                                                                                                                          |
+| **File Content**   | Name: `{{ $json['Your Name'] }}`<br>Submitted: `{{ $json.submittedAt }}`<br>Issue: `{{ $json['Issue'] }}` |
 | **Commit Message** | new ticket                                                                                                                                                                                                      |

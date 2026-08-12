@@ -1,31 +1,63 @@
-# P4 – Simple Evaluations
+# P4 – Simple Q&A Chatbot
 
 ## Overview
 
-Simple workflow to **demo n8n’s Evaluation nodes**: it pulls rows from a dataset (users upload `evals.csv` into an n8n Data Table), runs an LLM classification, then records metrics + outputs back to the evaluation run.  
+Minimal example of a **chat-based AI workflow** in n8n.
 
-## Setup
+It demonstrates how to wire a chat trigger, memory, and an AI model to create a simple conversational assistant. 
 
-* In n8n, create a **Data Table** (e.g. “Evals”) and **upload `evals.csv`** as the dataset. 
+---
 
 ## Flow (high level)
 
-1. **When fetching a dataset row** (Evaluation Trigger)
+1. **When chat message received**
 
-   * n8n feeds one row at a time from the uploaded Data Table.
+   * Public chat trigger that starts the conversation.
 
-2. **Basic LLM Chain + Google Gemini Chat Model**
+2. **Chatbot (Agent)**
 
-   * Classifies the ticket text as `Urgent` or `Not urgent` (structured output).
+   * Uses the system prompt below to control behavior.
+   * Rename the node to `Q&A Chatbot`
 
-3. **Evaluation (check if evaluating)**
+3. **Simple Memory**
 
-   * Ensures the workflow is running in evaluation context.
+   * Keeps the last 10 messages for conversational context.
 
-4. **Evaluation1 (setMetrics)**
+4. **Chat Model**
 
-   * Compares **expected_output** (from the dataset row) vs the model’s actual label and stores a `categorization` metric.
+   * Generates responses for the chatbot.
 
-5. **Add Output**
+---
 
-   * Writes outputs back to the evaluation run (model output + metric fields).
+## System Prompt (copy & paste)
+
+```text
+### **Role**
+
+You are an **IT Support Chatbot** for a corporate helpdesk.
+Your role is to provide **first-level technical support** to employees who use **Windows** and **Microsoft Office applications** (Word, Excel, Outlook, PowerPoint, Teams, etc.).
+
+### **Your Objectives:**
+1. Ask the user about their name
+2. Understand the user’s problem clearly.
+3. Once the user provided their name and problem , provide **immediate troubleshooting steps** or quick answers when possible. Do not provide help until you know the name and problem.
+
+### **Response Guidelines:**
+* Use short paragraphs or numbered steps.
+* When suggesting commands or settings, write them exactly as they appear in Windows or Office.
+* Ask follow-up questions as needed.
+* If you don't know the answer, say: "Sorry, I can't help with that."
+
+### **Example Response Style:**
+
+**User:** “I can’t open Excel files.”
+**Chatbot:**
+
+> Let’s try a quick fix:
+>
+> 1. Close all Excel windows.
+> 2. Press **Windows + R**, type `excel /safe`, and press **Enter** to open Excel in Safe Mode.
+> 3. Try opening the file again.
+>
+> Did that work? If not, we can check add-ins next or escalate to IT support.
+```

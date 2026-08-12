@@ -1,81 +1,65 @@
-# P5 – Simple Q&A Chatbot
+# P5 – Workflow Logic
 
-## Overview
-
-Minimal example of a **chat-based AI workflow** in n8n.
-It demonstrates how to wire a chat trigger, memory, and an AI model to create a simple conversational assistant. 
+**Important:** **Copy your workflow form P3** and **paste it into the workflow with the Q&A Chatbot (P4)**. 
 
 ---
 
-## System Prompt (copy & paste)
+## Workflow Overview
 
-```text
-### **Role**
+**Purpose**
+This workflow demonstrates a simple version of an internal IT support chat system that is able to solve simple questions automatically while being able to escalate issues when necessary.
 
-You are an **IT Support Chatbot** for a corporate helpdesk.
-Your role is to provide **first-level technical support** to employees who use **Windows** and **Microsoft Office applications** (Word, Excel, Outlook, PowerPoint, Teams, etc.).
+Incoming chat messages are automatically classified and either:
 
-### **Your Objectives:**
-1. Ask the user about their name
-2. Understand the user’s problem clearly.
-3. Once the user provided their name and problem , provide **immediate troubleshooting steps** or quick answers when possible. Do not provide help until you know the name and problem.
+* handled directly by an AI chatbot, or
+* escalated into a structured IT support ticket for human follow-up.
 
-### **Response Guidelines:**
-* Use short paragraphs or numbered steps.
-* When suggesting commands or settings, write them exactly as they appear in Windows or Office.
-* Ask follow-up questions as needed.
-* If you don't know the answer, say: "Sorry, I can't help with that."
 
-### **Example Response Style:**
+---
 
-**User:** “I can’t open Excel files.”
-**Chatbot:**
+### Q&A Chatbot Agent
 
-> Let’s try a quick fix:
->
-> 1. Close all Excel windows.
-> 2. Press **Windows + R**, type `excel /safe`, and press **Enter** to open Excel in Safe Mode.
-> 3. Try opening the file again.
->
-> Did that work? If not, we can check add-ins next or escalate to IT support.
+**Add to the System Prompt**
+
+Add the following part to the system prompt of your Q&A Chatbot (for example after the Response guidelines)
+
+```
+### **Escalation Rule:**
+If the request includes **Keywords or topics** such as:
+- *hardware*, *broken*, *damaged*, *replacement*, *repair*
+- *network down*, *server*, *outage*, *system crash*
+- *admin rights*, *installation*, *permissions*, *access denied*
+- *security*, *breach*, *virus*, *phishing*, *data loss*
+- *urgent*, *critical*, *can’t work*, *system not starting*
+- *new equipment*, *device setup*, *hardware request*
+- *custom software* like NovaCRM
+- *user demands human assistance*
+DO NOT ANSWER the question. 
+
+Instead, respond with "The IT help desk will you support with that. I've created a ticket and they will be in touch shortly"
 ```
 
----
+### If Node
 
-## Nodes Used
+`{{ $json.output }}` contains `I've created a ticket`
 
-1. **When chat message received**
+### AI Agent
 
-   * Public chat trigger that starts the conversation.
+**Prompt:**
 
-2. **Chatbot (Agent)**
+```
+Summarize the user issue and return JSON with the user name and a short issue description.
+```
 
-   * Handles the conversation logic and applies the system prompt.
+- Require Specific Output Format: `True`
+- Memory: *Connect to existing memory*
+- Model: *Connect to existing chat model*
 
-3. **Simple Memory**
+**Structured Output Parser – Generate from Example**
+```
+{
+  "Issue": "My laptop broke",
+  "Name": "Tobias"
+}
+```
 
-   * Stores the last 10 messages to keep conversational context.
-
-4. **Google Gemini Chat Model**
-
-   * Generates the chatbot’s responses.
-
----
-
-## Flow (high level)
-
-1. **When chat message received**
-
-   * Public chat trigger that starts the conversation.
-
-2. **Chatbot (Agent)**
-
-   * Uses the system prompt above to control behavior.
-
-3. **Simple Memory**
-
-   * Keeps the last 10 messages for conversational context.
-
-4. **Google Gemini Chat Model**
-
-   * Generates responses for the chatbot.

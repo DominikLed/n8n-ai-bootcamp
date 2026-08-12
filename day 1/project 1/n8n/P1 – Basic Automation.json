@@ -8,7 +8,7 @@
         "formFields": {
           "values": [
             {
-              "fieldLabel": "Issue description",
+              "fieldLabel": "Issue",
               "fieldType": "textarea",
               "requiredField": true
             },
@@ -21,46 +21,48 @@
         "options": {
           "respondWithOptions": {
             "values": {
-              "formSubmittedText": "IT support will be in touch shortly!"
+              "formSubmittedText": "IT support will be in touch shortly!  "
             }
           }
         }
       },
       "type": "n8n-nodes-base.formTrigger",
-      "typeVersion": 2.3,
+      "typeVersion": 2.6,
       "position": [
         0,
         0
       ],
-      "id": "7b40ffa9-57e2-4c0f-8975-017c326d92a3",
+      "id": "f2f3bbf2-99f6-410a-8b4f-77656db898dd",
       "name": "On form submission",
-      "webhookId": "c997eafa-9f30-4468-a1ce-a57a597e9659"
+      "webhookId": "a1db57f1-37be-491a-a235-88ecff4bd13c"
     },
     {
       "parameters": {
         "assignments": {
           "assignments": [
             {
-              "id": "267dcef0-9799-47ff-b11a-dca92d81f83b",
+              "id": "5981e8fe-7bc9-4de2-88e9-27ab498ee700",
               "name": "ID",
               "value": "={{ $json.submittedAt.toDateTime().ts.toString(36).toUpperCase() }}",
               "type": "string"
             }
           ]
         },
+        "includeOtherFields": true,
         "options": {}
       },
       "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
+      "typeVersion": 3.5,
       "position": [
         224,
         0
       ],
-      "id": "65843252-c0fe-4ea6-a0a6-bf5816c920b3",
-      "name": "Edit Fields"
+      "id": "93a92514-b360-492f-a193-f032fc791f14",
+      "name": "Set ID"
     },
     {
       "parameters": {
+        "authentication": "oAuth2",
         "resource": "file",
         "owner": {
           "__rl": true,
@@ -76,8 +78,8 @@
           "cachedResultName": "n8n-ai-bootcamp",
           "cachedResultUrl": "https://github.com/tobiaszwingmann-demo/n8n-ai-bootcamp"
         },
-        "filePath": "=day 1/project 1/tickets/{{ $json.ID }}.txt",
-        "fileContent": "=Name: {{ $('On form submission').item.json['Your Name'] }}\n\nSubmitted: {{ $('On form submission').item.json.submittedAt }}\n\nDescription:\n{{ $('On form submission').item.json['Issue description'] }}",
+        "filePath": "=day 1/tickets/{{ $json.ID }}.txt",
+        "fileContent": "=Name: {{ $json['Your Name'] }}\n\nSubmitted: {{ $json.submittedAt }}\n\nIssue: {{ $json['Issue'] }}",
         "commitMessage": "new ticket"
       },
       "type": "n8n-nodes-base.github",
@@ -86,12 +88,12 @@
         448,
         0
       ],
-      "id": "e728df4d-02e8-468e-931a-8b8e01054a16",
-      "name": "Create a file",
-      "webhookId": "6b0de6a2-6f40-4566-b4c8-dc1699f32f26",
+      "id": "0ae8c6d8-58f8-47f8-a5f9-6cc3393a7e27",
+      "name": "Save Ticket",
+      "webhookId": "5117ea51-2725-4015-a2a9-8445dd585e7d",
       "credentials": {
-        "githubApi": {
-          "id": "dcwZECd0FxhzyJj3",
+        "githubOAuth2Api": {
+          "id": "3xx3Q11Uh11Yce6s",
           "name": "GitHub account"
         }
       }
@@ -103,18 +105,18 @@
       "main": [
         [
           {
-            "node": "Edit Fields",
+            "node": "Set ID",
             "type": "main",
             "index": 0
           }
         ]
       ]
     },
-    "Edit Fields": {
+    "Set ID": {
       "main": [
         [
           {
-            "node": "Create a file",
+            "node": "Save Ticket",
             "type": "main",
             "index": 0
           }
@@ -125,21 +127,14 @@
   "active": false,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "d214019b-630c-43e7-b524-5d2d47c8456e",
+  "versionId": "c8a324c0-b383-41fd-854d-25d14c074d61",
   "meta": {
     "templateCredsSetupCompleted": true,
-    "instanceId": "26bf8eec37d4d0a7ee8a9b62eaf593a40b0ce784017882c7b978518d626df3a8"
+    "instanceId": "e9c7dfa4151901f348c9cf3e12a960bd53b5b8124c52360e419ad2260c87e732"
   },
-  "id": "Va9WweCUQwClPVKxv_hF_",
-  "tags": [
-    {
-      "name": "O'Reilly n8n",
-      "id": "1TjIuZa5ju0lNrOc",
-      "updatedAt": "2026-02-08T20:46:07.403Z",
-      "createdAt": "2026-02-08T20:46:07.403Z"
-    }
-  ]
+  "nodeGroups": [],
+  "id": "hOF9zM0cYE2QtIB1",
+  "tags": []
 }

@@ -1,0 +1,351 @@
+{
+  "name": "P3 – Simple Eval",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "IT Service Request",
+        "formDescription": "Submit your issue here",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Issue",
+              "fieldType": "textarea",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your Name",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {
+          "respondWithOptions": {
+            "values": {
+              "formSubmittedText": "IT support will be in touch shortly!  "
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -272,
+        -176
+      ],
+      "id": "b1307ed0-b505-4e38-88a0-cab177ec4711",
+      "name": "On form submission",
+      "webhookId": "52acfd9a-0485-4a73-9abd-0eb83b29b071"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "5981e8fe-7bc9-4de2-88e9-27ab498ee700",
+              "name": "ID",
+              "value": "={{ $json.submittedAt.toDateTime().ts.toString(36).toUpperCase() }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -48,
+        -176
+      ],
+      "id": "53e52af4-3fe4-4360-940f-a9349acce2bc",
+      "name": "Set ID"
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "file",
+        "owner": {
+          "__rl": true,
+          "value": "tobiaszwingmann-demo",
+          "mode": "list",
+          "cachedResultName": "tobiaszwingmann-demo",
+          "cachedResultUrl": "https://github.com/tobiaszwingmann-demo"
+        },
+        "repository": {
+          "__rl": true,
+          "value": "n8n-ai-bootcamp",
+          "mode": "list",
+          "cachedResultName": "n8n-ai-bootcamp",
+          "cachedResultUrl": "https://github.com/tobiaszwingmann-demo/n8n-ai-bootcamp"
+        },
+        "filePath": "=day 1/project 1/tickets/{{ $('Set ID').item.json.ID }}.txt",
+        "fileContent": "=Prio: {{ $json.output.prio }}\n\nName: {{ $('Set ID').item.json['Your Name'] }}\n\nSubmitted:{{ $('Set ID').item.json.submittedAt }}\n\nDescription: {{ $('Set ID').item.json['Issue description'] }}",
+        "commitMessage": "new ticket"
+      },
+      "type": "n8n-nodes-base.github",
+      "typeVersion": 1.1,
+      "position": [
+        752,
+        16
+      ],
+      "id": "eceb27ca-4c5f-491c-ac78-24e1f610ddb0",
+      "name": "Save Ticket",
+      "webhookId": "106181b6-d49c-408e-9987-d50003408dfd",
+      "credentials": {
+        "githubOAuth2Api": {
+          "id": "3xx3Q11Uh11Yce6s",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-5-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        184,
+        152
+      ],
+      "id": "0274572e-1eee-4aaa-9c57-ee30a4c7bad2",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "ndVxqnMaDx1fp7bs",
+          "name": "n8n free OpenAI API credits"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \"prio\": \"Urgent\" }"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        312,
+        152
+      ],
+      "id": "a0b1c4a9-a0cb-4839-bf23-a9c7cb715f0c",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Issue:\n\n```\n{{ $json['Issue']}}\n```",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": "### **Role**\n\nYou are a text classification system for an IT support helpdesk.\nYour task is to read an incoming support ticket and classify it as either **\"Urgent\"** or **\"Not urgent\"** based on the content.\n\n### Classification Rules:\n\n* **Urgent** if the ticket describes:\n\n  * Complete system or network outages.\n  * Inability to perform critical work tasks.\n  * Security breaches or data loss.\n  * Hardware failure affecting essential operations.\n  * Issues impacting multiple users or key business functions.\n  * Time-sensitive problems needing immediate attention.\n\n* **Not urgent** if the ticket describes:\n\n  * Minor bugs or usability issues.\n  * Requests for information, training, or feature changes.\n  * Scheduled maintenance or non-critical updates.\n  * Problems with available workarounds.\n  * Single-user issues not blocking essential tasks.\n\n### Output Format:\n\nRespond **only** with one of the following labels:\n\n* `Urgent`\n* `Not urgent`"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        176,
+        -80
+      ],
+      "id": "7b27e01f-8540-4260-bd48-ecdbaf347bfb",
+      "name": "Set Priority"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "e6tFme4nE62Wv1WL",
+          "mode": "list",
+          "cachedResultName": "evals",
+          "cachedResultUrl": "/projects/ZwOD4Paa1wjnFEmG/datatables/e6tFme4nE62Wv1WL"
+        }
+      },
+      "type": "n8n-nodes-base.evaluationTrigger",
+      "typeVersion": 4.7,
+      "position": [
+        -48,
+        16
+      ],
+      "id": "3a95d455-8415-4c95-b713-8c3b56f1e961",
+      "name": "When fetching a dataset row"
+    },
+    {
+      "parameters": {
+        "operation": "checkIfEvaluating"
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        528,
+        -80
+      ],
+      "id": "14731309-d9d7-4932-b98c-ed44f001122b",
+      "name": "Evaluating?"
+    },
+    {
+      "parameters": {
+        "operation": "setMetrics",
+        "metric": "categorization",
+        "expectedAnswer": "={{ $('When fetching a dataset row').item.json.ExpectedOutput }}",
+        "actualAnswer": "={{ $json.output.prio }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        752,
+        -176
+      ],
+      "id": "bd266a47-cb73-4a70-b3d6-48187856ab83",
+      "name": "Categorization"
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "e6tFme4nE62Wv1WL",
+          "mode": "list",
+          "cachedResultName": "evals",
+          "cachedResultUrl": "/projects/ZwOD4Paa1wjnFEmG/datatables/e6tFme4nE62Wv1WL"
+        },
+        "outputs": {
+          "values": [
+            {
+              "outputName": "Categorization",
+              "outputValue": "={{ $json.Categorization }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.evaluation",
+      "typeVersion": 4.8,
+      "position": [
+        976,
+        -176
+      ],
+      "id": "9d2a2d92-543c-4b1a-8dba-1f5116d5e184",
+      "name": "Save Eval Result"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Set ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set ID": {
+      "main": [
+        [
+          {
+            "node": "Set Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Set Priority",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Set Priority",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Priority": {
+      "main": [
+        [
+          {
+            "node": "Evaluating?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When fetching a dataset row": {
+      "main": [
+        [
+          {
+            "node": "Set Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluating?": {
+      "main": [
+        [
+          {
+            "node": "Categorization",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Save Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Categorization": {
+      "main": [
+        [
+          {
+            "node": "Save Eval Result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "19a6ee1b-471f-4b6e-a06b-9057af512440",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e9c7dfa4151901f348c9cf3e12a960bd53b5b8124c52360e419ad2260c87e732"
+  },
+  "nodeGroups": [],
+  "id": "scvezOfPyww2mcnL",
+  "tags": []
+}
