@@ -78,7 +78,7 @@
           "cachedResultName": "n8n-ai-bootcamp",
           "cachedResultUrl": "https://github.com/tobiaszwingmann-demo/n8n-ai-bootcamp"
         },
-        "filePath": "=day 1/project 1/tickets/{{ $('Set ID').item.json.ID }}.txt",
+        "filePath": "=day 1/tickets/{{ $('Set ID').item.json.ID }}.txt",
         "fileContent": "=Prio: {{ $json.output.prio }}\n\nName: {{ $('Set ID').item.json['Your Name'] }}\n\nSubmitted:{{ $('Set ID').item.json.submittedAt }}\n\nDescription: {{ $('Set ID').item.json['Issue description'] }}",
         "commitMessage": "new ticket"
       },
