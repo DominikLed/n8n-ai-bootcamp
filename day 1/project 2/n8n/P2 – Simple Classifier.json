@@ -79,7 +79,7 @@
           "cachedResultUrl": "https://github.com/tobiaszwingmann-demo/n8n-ai-bootcamp"
         },
         "filePath": "=day 1/tickets/{{ $('Set ID').item.json.ID }}.txt",
-        "fileContent": "=Prio: {{ $json.output.prio }}\n\nName: {{ $('Set ID').item.json['Your Name'] }}\n\nSubmitted:{{ $('Set ID').item.json.submittedAt }}\n\Issue: {{ $('Set ID').item.json['Issue'] }}",
+        "fileContent": "=Prio: {{ $json.output.prio }}\n\nName: {{ $('Set ID').item.json['Your Name'] }}\n\nSubmitted:{{ $('Set ID').item.json.submittedAt }}\n\nIssue: {{ $('Set ID').item.json['Issue'] }}",
         "commitMessage": "new ticket"
       },
       "type": "n8n-nodes-base.github",
@@ -139,7 +139,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Issue:\n\n```\n{{ $json['Issue'] }}\n```",
+        "text": "=Issue:\n\n```\n\n```",
         "hasOutputParser": true,
         "messages": {
           "messageValues": [
@@ -224,7 +224,7 @@
     "binaryMode": "separate",
     "availableInMCP": false
   },
-  "versionId": "7e6ff34d-c982-4b31-baea-bf30072eb798",
+  "versionId": "c2819ca7-08b8-4823-8c44-ea5fa8c106ac",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "e9c7dfa4151901f348c9cf3e12a960bd53b5b8124c52360e419ad2260c87e732"
